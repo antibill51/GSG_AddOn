@@ -1,0 +1,49 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+# ==============================================================================
+# Home Assistant Community Add-on: gsg
+# Configures gsg
+# ==============================================================================
+
+#!/usr/bin/with-contenv bashio
+set -e
+
+MYSQL_HOST=$(bashio::config 'mysql_host')
+MYSQL_USER=$(bashio::config 'mysql_user')
+MYSQL_PASSWORD=$(bashio::config 'mysql_password')
+MYSQL_DATABASE=$(bashio::config 'mysql_database')
+
+# Mise à jour des fichiers de configuration
+echo "🔧 Mise à jour de config.inc.php..."
+sed -i "s/\$hostname = .*/\$hostname = \"$MYSQL_HOST\";/" /var/www/gsg/config.inc.php
+sed -i "s/\$username = .*/\$username = \"$MYSQL_USER\";/" /var/www/gsg/config.inc.php
+sed -i "s/\$password = .*/\$password = \"$MYSQL_PASSWORD\";/" /var/www/gsg/config.inc.php
+sed -i "s/\$database = .*/\$database = \"$MYSQL_DATABASE\";/" /var/www/gsg/config.inc.php
+
+# Vérification de la base de données et création si nécessaire
+echo "🛠️ Vérification de la base de données sur le serveur distant..."
+DB_EXISTS=$(mariadb --skip-ssl --protocol=tcp -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "SHOW DATABASES LIKE '$MYSQL_DATABASE';" | grep "$MYSQL_DATABASE" > /dev/null; echo $?)
+
+if [ "$DB_EXISTS" -ne 0 ]; then
+    echo "📂 Création de la base de données et de l'utilisateur..."
+    mariadb --skip-ssl --protocol=tcp -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "CREATE DATABASE $MYSQL_DATABASE;"
+    mariadb --skip-ssl --protocol=tcp -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';"
+    mariadb --skip-ssl --protocol=tcp -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "FLUSH PRIVILEGES;"
+    
+    echo "📥 Importation des fichiers SQL..."
+    mariadb --skip-ssl --protocol=tcp -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < /var/www/gsg/SQL/domotique.sql
+    mariadb --skip-ssl --protocol=tcp -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < /var/www/gsg/SQL/cout_consomme_periode.sql
+else
+    echo "✅ La base de données '$MYSQL_DATABASE' existe déjà."
+    
+    echo "🛠️ Vérification que la base de données '$MYSQL_DATABASE' ne soit pas vide..."
+    TABLE_COUNT=$(mariadb --skip-ssl --protocol=tcp -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MYSQL_DATABASE';" | tail -n 1)
+    
+    if [ "$TABLE_COUNT" -eq 0 ]; then
+        echo "📥 Importation des fichiers SQL car la base de données est vide..."
+        mariadb --skip-ssl --protocol=tcp -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < /var/www/gsg/SQL/domotique.sql
+        mariadb --skip-ssl --protocol=tcp -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < /var/www/gsg/SQL/cout_consomme_periode.sql
+    else
+        echo "✅ La base de données '$MYSQL_DATABASE' n'est pas vide."
+    fi
+fi

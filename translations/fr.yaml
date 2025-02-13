@@ -1,0 +1,20 @@
+---
+configuration:
+  mysql_host:
+    name: Hôte MySQL
+    description: >-
+      Adresse de l'hôte SQL.
+  mysql_user:
+    name: Nom d'utilisateur MySQL
+    description: >-
+      Utilisateur MySQL.
+  mysql_password:
+    name: Mot de passe MySQL
+    description: >-
+      Mot de passe MySQL.
+  mysql_database:
+    name: Base MySQL
+    description: >-
+      Nom de la base de donnée MySQL.
+network:
+  9541/tcp: Interface Web.

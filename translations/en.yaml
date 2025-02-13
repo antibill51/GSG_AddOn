@@ -1,0 +1,20 @@
+---
+configuration:
+  mysql_host:
+    name: MySQL host
+    description: >-
+      MySQL host.
+  mysql_user:
+    name: MySQL username
+    description: >-
+      MySQL username.
+  mysql_password:
+    name: MySQL password
+    description: >-
+      MySQL password.
+  mysql_database:
+    name: MySQL database
+    description: >-
+      MySQL database.
+network:
+  9541/tcp: Web interface
