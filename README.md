@@ -33,7 +33,7 @@ rights:
     database: gsg
 ```
 **⚠️ Note :**  
-Les valeurs peuvent être modifiées, mais elles doivent **correspondre à celles configurées dans l'addon**.
+Les valeurs peuvent être modifiées, mais elles doivent **correspondre à celles configurées dans cet addon**.
 
 ### 🛠️ **Serveur MQTT**
 Un **broker MQTT** est nécessaire pour remonter les informations dans Home Assistant.  
@@ -63,6 +63,7 @@ mqtt_host: "core-mosquitto"
 mqtt_port: 1883
 mqtt_user: "homeassistant"
 mqtt_password: "password"
+mqtt_delay: "300"
 mysql_host: "core-mariadb"
 mysql_user: "gsg"
 mysql_password: "gsg"
@@ -79,9 +80,9 @@ L'addon utilise **MQTT Discovery** pour enregistrer automatiquement les entités
 |-------------|-------------|-------------|
 | Sensor | `sensor.gestion_stock_granules_sacs_restants` | Nombre de sacs restants |
 | Sensor | `sensor.gestion_stock_granules_sacs_consommes` | Nombre de sacs consommés |
-| Sensor | `sensor.gestion_stock_granules_cout_conso` | Coût total de la consommation |
-| Sensor | `sensor.gestion_stock_granules_mois_01` → `mois_12` | Consommation mensuelle |
-| Button | `button.gestion_stock_granules_ajouter_sac` | Ajout d'un sac |
+| Sensor | `sensor.gestion_stock_granules_cout_de_la_consommation` | Coût total de la consommation |
+| Sensor | `sensor.gestion_stock_granules_consommation_septembre` → `aout` | Consommation mensuelle |
+| Button | `button.gestion_stock_granules_ajouter_un_sac` | Ajout d'un sac |
 | Number | `number.gestion_stock_granules_ajouter_x_sacs` | Ajouter plusieurs sacs (1 à 3) |
 
 ---
@@ -97,7 +98,7 @@ L'addon utilise **MQTT Discovery** pour enregistrer automatiquement les entités
 ## 🛠️ **Développement et Contributions**
 👨‍💻 **Développeur** : [Antibill51](https://github.com/antibill51)  
 💡 **Contributions** : Pull Requests et Issues bienvenues !  
-
+👨‍💻 **GSG** (R.Syrek) : [domotique-home.fr](https://domotique-home.fr/gestion-de-chauffage-stock-de-granules-gsg/)
 💜 **Licence :** [MIT](LICENSE)  
 📧 **Contact :** remi.kiragossian@gmail.com  
 
