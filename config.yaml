@@ -1,12 +1,12 @@
----
-name: GSG
-version: 0.5
-slug: gsg
-description: Un add-on pour gérer un stock de sacs de granulés de bois
+name: "Gestion Stock Granulés"
+version: "1.0.0"
+slug: "gsg"
+description: "Add-on pour la gestion des stocks de granulés avec MQTT et MySQL"
 url: https://github.com/antibill51/gsg-addon
 codenotary: remi.kiragossian@gmail.com
 webui: "[PROTO:ssl]://[HOST]:[PORT:9541]"
-startup: services
+startup: "application"
+boot: "auto"
 init: false
 ingress: true
 ingress_port: 9541
@@ -15,20 +15,33 @@ panel_icon: "mdi:fire"
 panel_title: "Stock Granulés"
 panel_admin: false
 arch:
-  - aarch64
   - amd64
   - armv7
+  - aarch64
+options:
+  mqtt_host: "core-mosquitto"
+  mqtt_port: 1883
+  mqtt_user: "homeassistant"
+  mqtt_password: "password"
+  mqtt_delay: "300"
+  mysql_host: "core-mariadb"
+  mysql_user: "gsg"
+  mysql_password: "gsg"
+  mysql_database: "gsg"
+schema:
+  mqtt_host: "str"
+  mqtt_port: "int"
+  mqtt_user: "str"
+  mqtt_password: "password"
+  mqtt_delay: "int"
+  mysql_host: "str"
+  mysql_user: "str"
+  mysql_password: "password"
+  mysql_database: "str"
 ports:
   9541/tcp: 9541
 ports_description:
   9541/tcp: GSG web interface
-options:
-  mysql_host: core-mariadb
-  mysql_user: gsg
-  mysql_password: gsg
-  mysql_database: gsg
-schema:
-  mysql_host: str
-  mysql_user: str
-  mysql_password: password
-  mysql_database: str
+services:
+  - "mqtt:want"
+  - "mysql:want"

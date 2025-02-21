@@ -1,20 +1,40 @@
 ---
 configuration:
+  mqtt_host:
+    name: MQTT host
+    description: >-
+      Address of the MQTT broker (e.g., core-mosquitto).
+  mqtt_port:
+    name: MQTT port
+    description: >-
+      Port used for connecting to the MQTT broker (default: 1883).
+  mqtt_user:
+    name: MQTT username
+    description: >-
+      Username for MQTT authentication.
+  mqtt_password:
+    name: MQTT password
+    description: >-
+      Password for MQTT authentication.
+  mqtt_delay:
+    name: MQTT update delay
+    description: >-
+      Time in seconds between each automatic sensor update.
   mysql_host:
     name: MySQL host
     description: >-
-      MySQL host.
+      MySQL server address.
   mysql_user:
     name: MySQL username
     description: >-
-      MySQL username.
+      Username for MySQL authentication.
   mysql_password:
     name: MySQL password
     description: >-
-      MySQL password.
+      Password for MySQL authentication.
   mysql_database:
     name: MySQL database
     description: >-
-      MySQL database.
+      Name of the MySQL database.
 network:
-  9541/tcp: Web interface
+  9541/tcp: Web interface.

@@ -1,0 +1,32 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+# ==============================================================================
+# Home Assistant Community Add-on: gsg
+# Configures gsg
+# ==============================================================================
+
+#!/usr/bin/with-contenv bashio
+
+# Export des variables MQTT
+export MQTT_HOST=$(bashio::config 'mqtt_host')
+export MQTT_PORT=$(bashio::config 'mqtt_port')
+export MQTT_USER=$(bashio::config 'mqtt_user')
+export MQTT_PASSWORD=$(bashio::config 'mqtt_password')
+export MQTT_DELAY=$(bashio::config 'mqtt_delay')
+
+echo "Lancement du script de connexion MQTT..."
+python3 /python/mqtt_client.py &
+
+sleep 5
+echo "Lancement du script d'autodiscovery MQTT..."
+python3 /python/mqtt_autodiscovery.py &
+
+sleep 5
+echo "Lancement du script MQTT pour publier les données..."
+python3 /python/mqtt_sensors.py &
+
+echo "Lancement du script MQTT pour écouter les commandes..."
+python3 /python/mqtt_command_listener.py &
+
+echo "Add-on en cours d'exécution..."
+wait  # Garde les processus en arrière-plan actifs

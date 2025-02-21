@@ -1,5 +1,25 @@
 ---
 configuration:
+  mqtt_host:
+    name: Hôte MQTT
+    description: >-
+      Adresse de l'hôte MQTT.
+  mqtt_port:
+    name: Port MQTT
+    description: >-
+      Port utilisé pour la connexion au serveur MQTT (1883 par défaut).
+  mqtt_user:
+    name: Nom d'utilisateur MQTT
+    description: >-
+      Nom d'utilisateur pour l'authentification au serveur MQTT.
+  mqtt_password:
+    name: Mot de passe MQTT
+    description: >-
+      Mot de passe pour l'authentification au serveur MQTT.
+  mqtt_delay:
+    name: Délai de mise à jour MQTT
+    description: >-
+      Temps en secondes entre chaque mise à jour automatique des capteurs.
   mysql_host:
     name: Hôte MySQL
     description: >-
@@ -15,6 +35,6 @@ configuration:
   mysql_database:
     name: Base MySQL
     description: >-
-      Nom de la base de donnée MySQL.
+      Nom de la base de données MySQL.
 network:
   9541/tcp: Interface Web.

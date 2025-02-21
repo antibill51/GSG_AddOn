@@ -160,13 +160,14 @@ $last_date = $d['time'];
         $json_data["Avril $annee"] = $conso_moisF[7];
         $json_data["Mai $annee"] = $conso_moisF[8];
         $json_data["Juin $annee"] = $conso_moisF[9];
-        $json_data["Jullet $annee"] = $conso_moisF[10];
+        $json_data["Juillet $annee"] = $conso_moisF[10];
         $json_data["Aout $annee"] = $conso_moisF[11];
         $json_data["regulier"] = $regulier;
         $json_data["mensuel"] = $mensuel;
         $json_data["annuel"] = $annuel;
         $json_data["last_date"] = $last_date;
-        
+		$json_data["NbrSacRestant"] = $stockini + $reliquat - $TotalSacConsomes;
+        $json_data["CoutConsome"] = $CoutConsome;        
         $json_output = json_encode($json_data);  
         echo $json_output;
     }
