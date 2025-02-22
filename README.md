@@ -98,7 +98,7 @@ L'addon utilise **MQTT Discovery** pour enregistrer automatiquement les entités
 ## 🛠️ **Développement et Contributions**
 👨‍💻 **Développeur** : [Antibill51](https://github.com/antibill51)  
 💡 **Contributions** : Pull Requests et Issues bienvenues !  
-👨‍💻 **GSG** (R.Syrek) : [domotique-home.fr](https://domotique-home.fr/gestion-de-chauffage-stock-de-granules-gsg/)
+👨‍💻 **GSG** (R.Syrek) : [domotique-home.fr](https://domotique-home.fr/gestion-de-chauffage-stock-de-granules-gsg/)  
 💜 **Licence :** [MIT](LICENSE)  
 📧 **Contact :** remi.kiragossian@gmail.com  
 
