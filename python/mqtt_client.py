@@ -17,7 +17,7 @@ client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
 client.will_set(MQTT_TOPIC_STATUS, "offline", retain=True)
 
 # Callback appelé en cas de déconnexion
-def on_disconnect(client, userdata, rc):
+def on_disconnect(client, userdata, rc, *args):
     """Gestion de la reconnexion automatique."""
     print("Déconnecté de MQTT ! Tentative de reconnexion...")
     while True:
