@@ -38,3 +38,4 @@ WORKDIR /python
 # Vérification des permissions 
 RUN chmod +x /python/*.py
 RUN chown -R nginx:nginx /var/www/gsg
+RUN chmod -R +x /etc/s6-overlay/s6-rc.d/
