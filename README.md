@@ -1,7 +1,7 @@
 # GSG_AddOn for Home Assistant
 
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Addon-blue)](https://www.home-assistant.io/)
-[![Version](https://img.shields.io/badge/Version-1.0.1-brightgreen)](https://github.com/antibill51/GSG_AddOn)
+[![Version](https://img.shields.io/badge/Version-1.0.2-brightgreen)](https://github.com/antibill51/GSG_AddOn)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
 ## 🔥 Gestion du Stock de Granulés (GSG) pour Home Assistant

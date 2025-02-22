@@ -76,9 +76,6 @@ def publish_sensors():
 
     
 # Callback pour recevoir les messages MQTT
-# def on_message(client, userdata, msg):
-#     print(f"Commande reçue : {msg.payload.decode()}")
-#     publish_sensors()  # Envoie immédiat des valeurs
 def on_message(client, userdata, msg):
     try:
         payload = json.loads(msg.payload.decode("utf-8"))
@@ -92,6 +89,7 @@ def on_message(client, userdata, msg):
 
 # Abonnement aux commandes
 client.subscribe(f"{MQTT_TOPIC}/refresh")
+client.subscribe("homeassistant/status")
 client.on_message = on_message
 
 def periodic_update():
