@@ -1,7 +1,7 @@
 # GSG_AddOn for Home Assistant
 
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Addon-blue)](https://www.home-assistant.io/)
-[![Version](https://img.shields.io/badge/Version-1.0.1-brightgreen)](https://github.com/antibill51/gsg-addon)
+[![Version](https://img.shields.io/badge/Version-1.0.1-brightgreen)](https://github.com/antibill51/GSG_AddOn)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
 ## 🔥 Gestion du Stock de Granulés (GSG) pour Home Assistant
@@ -46,7 +46,7 @@ L'addon a été testé avec **Mosquitto broker**.
 1. Allez dans **Paramètres → Add-ons → Ajouter un dépôt**  
 2. Entrez l’URL du dépôt GitHub :  
    ```
-   https://github.com/antibill51/gsg-addon
+   https://github.com/antibill51/GSG_AddOn
    ```
 3. Installez l’addon **GSG Gestion Stock Granulés**
 4. Configurez **les accès MySQL et MQTT**
@@ -106,5 +106,5 @@ L'addon utilise **MQTT Discovery** pour enregistrer automatiquement les entités
 
 ## 🌟 **Support et Remerciements**
 💬 **Merci aux contributeurs de la communauté Home Assistant !**  
-📢 **Besoin d’aide ?** Ouvrez un ticket sur [GitHub Issues](https://github.com/antibill51/gsg-addon/issues) !
+📢 **Besoin d’aide ?** Ouvrez un ticket sur [GitHub Issues](https://github.com/antibill51/GSG_AddOn/issues) !
 
