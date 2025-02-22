@@ -1,4 +1,4 @@
-from mqtt_client import client  # Importer la connexion MQTT existante
+from mqtt_client import client, is_connected
 # import paho.mqtt.client as mqtt
 import json
 from datetime import datetime
@@ -9,6 +9,13 @@ import os
 # Configuration MQTT
 MQTT_TOPIC_COMMAND = "homeassistant/sensor/gsg/command"
 MQTT_TOPIC = "homeassistant/sensor/gsg"
+
+# Attendre que la connexion soit établie
+while not is_connected:
+    print("En attente de la connexion MQTT...")
+    time.sleep(1)
+
+print("Connexion MQTT établie, démarrage du script...")
 
 # Callback lors de la réception d'un message MQTT
 def on_message(client, userdata, msg):
@@ -73,4 +80,3 @@ client.on_message = on_message
 
 
 print("Attente de commandes MQTT...")
-client.loop_forever()

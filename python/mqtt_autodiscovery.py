@@ -1,4 +1,4 @@
-from mqtt_client import client  # Importer la connexion MQTT existante
+from mqtt_client import client, is_connected
 # import paho.mqtt.client as mqtt
 import json
 import os
@@ -12,6 +12,13 @@ LWT_TOPIC = "homeassistant/sensor/gsg/status"
 
 MQTT_DELAY = int(os.getenv("MQTT_DELAY", "mqtt_delay"))
 
+
+# Attendre que la connexion soit établie
+while not is_connected:
+    print("En attente de la connexion MQTT...")
+    time.sleep(1)
+
+print("Connexion MQTT établie, démarrage du script...")
 
 # Récupération du SUPERVISOR_TOKEN pour interroger l'API Home Assistant
 SUPERVISOR_TOKEN = os.getenv("SUPERVISOR_TOKEN")

@@ -9,6 +9,9 @@ MQTT_USER = os.getenv("MQTT_USER", "mqtt_user")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "mqtt_password")
 MQTT_TOPIC_STATUS = "homeassistant/sensor/gsg/status"
 
+# Variable pour suivre l'état de connexion
+is_connected = False  
+
 # Création du client MQTT
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
@@ -16,9 +19,20 @@ client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
 # Définition du LWT (Last Will and Testament)
 client.will_set(MQTT_TOPIC_STATUS, "offline", retain=True)
 
+# Callback en cas de connexion réussie
+def on_connect(client, userdata, flags, rc, *args):
+    global is_connected
+    if rc == 0:
+        is_connected = True
+        print("Connecté à MQTT !")
+    else:
+        print(f"Échec de connexion, code {rc}")
+
 # Callback appelé en cas de déconnexion
 def on_disconnect(client, userdata, rc, *args):
     """Gestion de la reconnexion automatique."""
+    global is_connected
+    is_connected = False
     print("Déconnecté de MQTT ! Tentative de reconnexion...")
     while True:
         try:
@@ -30,7 +44,8 @@ def on_disconnect(client, userdata, rc, *args):
             print(f"Reconnexion échouée : {e}")
             time.sleep(5)  # Attendre 5 secondes avant de réessayer
 
-# Attacher le callback de déconnexion
+# Attacher les callback 
+client.on_connect = on_connect
 client.on_disconnect = on_disconnect
 
 # Connexion au broker avec gestion des erreurs

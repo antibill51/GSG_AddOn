@@ -1,4 +1,4 @@
-from mqtt_client import client  # Importer la connexion MQTT existante
+from mqtt_client import client, is_connected
 import json
 import time
 import os
@@ -12,6 +12,13 @@ MQTT_TOPIC = "homeassistant/sensor/gsg"
 # Lire les paramètres depuis les variables d’environnement
 MQTT_DELAY = int(os.getenv("MQTT_DELAY", "mqtt_delay"))
 
+
+# Attendre que la connexion soit établie
+while not is_connected:
+    print("En attente de la connexion MQTT...")
+    time.sleep(1)
+
+print("Connexion MQTT établie, démarrage du script...")
 
 def get_data():
     try:
@@ -94,6 +101,3 @@ def periodic_update():
 
 # Démarrer la mise à jour périodique sans bloquer MQTT
 periodic_update()
-
-# Lancer la boucle MQTT (non bloquante)
-client.loop_forever()
