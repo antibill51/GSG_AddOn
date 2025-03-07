@@ -1,7 +1,6 @@
 import paho.mqtt.client as mqtt
 import os
 import time
-import uuid
 import logging
 
 # Configuration des logs
@@ -18,7 +17,7 @@ MQTT_TOPIC_STATUS = "homeassistant/sensor/gsg/status"
 is_connected = False  
 
 # Création du client MQTT
-client_id = f"gsg_{uuid.uuid4().hex[:8]}"  # Ex: "gsg_a1b2c3d4"
+client_id = "gsg"
 client = mqtt.Client(client_id=client_id, protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
 client.enable_logger()
 
@@ -75,7 +74,7 @@ try:
         if time.time() - start_time > timeout:
             raise TimeoutError("Échec de connexion MQTT après attente.")
         logging.info("Attente de connexion MQTT...")
-        time.sleep(1)
+        time.sleep(10)
 
     client.publish(MQTT_TOPIC_STATUS, "online", retain=True)
 except Exception as e:
