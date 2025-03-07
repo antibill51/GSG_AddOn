@@ -15,7 +15,9 @@ is_connected = False
 
 # Création du client MQTT
 client_id = f"gsg_{uuid.uuid4().hex[:8]}"  # Ex: "gsg_a1b2c3d4"
-client = mqtt.Client(client_id, mqtt.CallbackAPIVersion.VERSION2)
+# client = mqtt.Client(client_id, mqtt.CallbackAPIVersion.VERSION2)
+client = mqtt.Client(client_id=client_id, protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
+
 
 # client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
