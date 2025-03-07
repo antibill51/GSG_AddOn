@@ -15,10 +15,10 @@ MQTT_DELAY = int(os.getenv("MQTT_DELAY", "mqtt_delay"))
 
 # Attendre que la connexion soit établie
 while not is_connected:
-    print("En attente de la connexion MQTT...")
-    time.sleep(1)
+    print("SENSORS En attente de la connexion MQTT...")
+    time.sleep(10)
 
-print("Connexion MQTT établie, démarrage du script...")
+print("Connexion MQTT établie, démarrage du script SENSORS...")
 
 def get_data():
     try:

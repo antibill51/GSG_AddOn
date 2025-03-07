@@ -12,10 +12,10 @@ MQTT_TOPIC = "homeassistant/sensor/gsg"
 
 # Attendre que la connexion soit établie
 while not is_connected:
-    print("En attente de la connexion MQTT...")
-    time.sleep(1)
+    print("COMMAND LISTENER En attente de la connexion MQTT...")
+    time.sleep(10)
 
-print("Connexion MQTT établie, démarrage du script...")
+print("Connexion MQTT établie, démarrage du script COMMAND LISTENER...")
 
 # Callback lors de la réception d'un message MQTT
 def on_message(client, userdata, msg):

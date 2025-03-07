@@ -15,10 +15,10 @@ MQTT_DELAY = int(os.getenv("MQTT_DELAY", "mqtt_delay"))
 
 # Attendre que la connexion soit établie
 while not is_connected:
-    print("En attente de la connexion MQTT...")
-    time.sleep(1)
+    print("AUTODISCOVERY En attente de la connexion MQTT...")
+    time.sleep(10)
 
-print("Connexion MQTT établie, démarrage du script...")
+print("Connexion MQTT établie, démarrage du script AUTODISCOVERY...")
 
 # Récupération du SUPERVISOR_TOKEN pour interroger l'API Home Assistant
 SUPERVISOR_TOKEN = os.getenv("SUPERVISOR_TOKEN")
