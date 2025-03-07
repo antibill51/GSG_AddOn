@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 import os
 import time
+import uuid
 
 # Configuration MQTT
 MQTT_BROKER = os.getenv("MQTT_HOST", "mqtt_broker")
@@ -13,7 +14,10 @@ MQTT_TOPIC_STATUS = "homeassistant/sensor/gsg/status"
 is_connected = False  
 
 # Création du client MQTT
-client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+client_id = f"gsg_{uuid.uuid4().hex[:8]}"  # Ex: "gsg_a1b2c3d4"
+client = mqtt.Client(client_id, mqtt.CallbackAPIVersion.VERSION2)
+
+# client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
 
 # Définition du LWT (Last Will and Testament)
