@@ -5,6 +5,10 @@ import os
 import requests
 from datetime import datetime
 import threading
+import logging
+
+# Configuration des logs
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # Configuration MQTT
 MQTT_TOPIC = "homeassistant/sensor/gsg"
@@ -15,17 +19,17 @@ MQTT_DELAY = int(os.getenv("MQTT_DELAY", "mqtt_delay"))
 
 # Attendre que la connexion soit établie
 while not is_connected:
-    print("SENSORS En attente de la connexion MQTT...")
+    logging.warning("SENSORS En attente de la connexion MQTT...")
     time.sleep(10)
 
-print("Connexion MQTT établie, démarrage du script SENSORS...")
+logging.info("Connexion MQTT établie, démarrage du script SENSORS...")
 
 def get_data():
     try:
         response = requests.get("http://127.0.0.1:9541/json.php?json=1", timeout=5)
         response.raise_for_status()
         data = response.json()
-        # print("Données récupérées:", data)  # Debugging
+        logging.debug("Données récupérées:", data)  # Debugging
 
         sacs_restants = int(data.get("NbrSacRestant", 0))
         sacs_consommes = int(data.get("NbrSacConso", 0))
@@ -58,7 +62,7 @@ def get_data():
         }
 
     except requests.RequestException as e:
-        print(f"Erreur lors de la récupération des données: {e}")
+        logging.error(f"Erreur lors de la récupération des données: {e}")
         return None
 
 
@@ -80,10 +84,10 @@ def on_message(client, userdata, msg):
     try:
         payload = json.loads(msg.payload.decode("utf-8"))
         if payload.get("refresh"):  # Vérifie si une commande de rafraîchissement est envoyée
-            print("Commande de rafraîchissement reçue. Mise à jour immédiate des capteurs.")
+            logging.info("Commande de rafraîchissement reçue. Mise à jour immédiate des capteurs.")
             publish_sensors()
     except json.JSONDecodeError:
-        print(f"Message MQTT non reconnu : {msg.payload.decode('utf-8')}")
+        logging.warning(f"Message MQTT non reconnu : {msg.payload.decode('utf-8')}")
 
 
 

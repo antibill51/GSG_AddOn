@@ -4,7 +4,10 @@ import json
 import os
 import time
 import requests
+import logging
 
+# Configuration des logs
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # Configuration MQTT
 MQTT_TOPIC = "homeassistant/sensor/gsg"
@@ -15,10 +18,9 @@ MQTT_DELAY = int(os.getenv("MQTT_DELAY", "mqtt_delay"))
 
 # Attendre que la connexion soit établie
 while not is_connected:
-    print("AUTODISCOVERY En attente de la connexion MQTT...")
+    logging.warning("AUTODISCOVERY En attente de la connexion MQTT...")
     time.sleep(10)
-
-print("Connexion MQTT établie, démarrage du script AUTODISCOVERY...")
+logging.info("Connexion MQTT établie, démarrage du script AUTODISCOVERY...")
 
 # Récupération du SUPERVISOR_TOKEN pour interroger l'API Home Assistant
 SUPERVISOR_TOKEN = os.getenv("SUPERVISOR_TOKEN")
@@ -43,7 +45,7 @@ if SUPERVISOR_TOKEN:
                 HASS_URL = HASS_URL.rstrip("/")  # Supprime le "/" final pour éviter les doubles slashs
 
     except requests.RequestException as e:
-        print(f"Erreur lors de la récupération des informations Supervisor : {e}")
+        logging.error(f"Erreur lors de la récupération des informations Supervisor : {e}")
 
 # Construire l'URL Ingress avec l'URL correcte
 CONFIGURATION_URL = f"{HASS_URL}/hassio/ingress/{ADDON_ID}/" if HASS_URL and ADDON_ID else None
@@ -208,4 +210,4 @@ for number_id, number_info in number_entities.items():
     client.publish(f"homeassistant/number/gsg_{number_id}/config", json.dumps(discovery_payload), retain=True)
 
 # Publier que l'addon est en ligne
-print("Autodiscovery MQTT publié")
+logging.info("Autodiscovery MQTT publié")

@@ -5,6 +5,10 @@ from datetime import datetime
 import requests
 import time
 import os
+import logging
+
+# Configuration des logs
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # Configuration MQTT
 MQTT_TOPIC_COMMAND = "homeassistant/sensor/gsg/command"
@@ -12,10 +16,10 @@ MQTT_TOPIC = "homeassistant/sensor/gsg"
 
 # Attendre que la connexion soit établie
 while not is_connected:
-    print("COMMAND LISTENER En attente de la connexion MQTT...")
+    logging.warning("COMMAND LISTENER En attente de la connexion MQTT...")
     time.sleep(10)
 
-print("Connexion MQTT établie, démarrage du script COMMAND LISTENER...")
+logging.info("Connexion MQTT établie, démarrage du script COMMAND LISTENER...")
 
 # Callback lors de la réception d'un message MQTT
 def on_message(client, userdata, msg):
@@ -32,19 +36,19 @@ def on_message(client, userdata, msg):
             client.publish(f"{MQTT_TOPIC}/refresh", json.dumps({"refresh": True}), retain=False)
 
     except Exception as e:
-        print(f"Erreur traitement MQTT: {e}")
+        logging.error(f"Erreur traitement MQTT: {e}")
 
 def ajouter_sac():
     url = f"http://127.0.0.1:9541/data_granulee.php?value=1"
     try:
         response = requests.get(url, verify=False)  # `verify=False` pour ignorer les erreurs SSL
         if response.status_code == 200:
-            print("Un sac ajouté avec succès")
+            logging.info("Un sac ajouté avec succès")
             # client.publish(f"{MQTT_TOPIC}/command", json.dumps({"refresh": True}), retain=False)
         else:
-            print(f"Erreur lors de l'ajout du sac: {response.status_code} - {response.text}")
+            logging.warning(f"Erreur lors de l'ajout du sac: {response.status_code} - {response.text}")
     except requests.exceptions.RequestException as e:
-        print(f"Erreur de connexion: {e}")
+        logging.error(f"Erreur de connexion: {e}")
 
 def ajouter_x_sacs(nombre):
     try:
@@ -52,13 +56,13 @@ def ajouter_x_sacs(nombre):
         for _ in range(nombre):
             ajouter_sac()
             # time.sleep(0.5)
-        print(f"{nombre} sacs ajoutés")
+        logging.info(f"{nombre} sacs ajoutés")
         # client.publish(f"{MQTT_TOPIC}/ajouter_x_sacs/state", json.dumps({"value": 0}), retain=True)
         # time.sleep(1)  # Ajout d'un délai de 1s
         # client.publish(f"{MQTT_TOPIC}/command", json.dumps({"refresh": True}), retain=False)
 
     except ValueError:
-        print("Valeur invalide pour ajouter_x_sacs")
+        logging.error("Valeur invalide pour ajouter_x_sacs")
 
 
 # Fonction pour mettre à jour la date d'entretien
@@ -67,16 +71,16 @@ def maj_entretien(type_entretien):
     try:
         response = requests.get(url, verify=False)  # `verify=False` pour ignorer les erreurs SSL
         if response.status_code == 200:
-            print(f"Entretien {type_entretien} mis à jour")
+            logging.info(f"Entretien {type_entretien} mis à jour")
             # client.publish(f"{MQTT_TOPIC}/command", json.dumps({"refresh": True}), retain=False)
 
         else:
-            print(f"Erreur lors de l'ajout du sac: {response.status_code} - {response.text}")
+            logging.error(f"Erreur lors de l'ajout du sac: {response.status_code} - {response.text}")
     except requests.exceptions.RequestException as e:
-        print(f"Erreur de connexion: {e}")
+        logging.error(f"Erreur de connexion: {e}")
 
 client.subscribe(MQTT_TOPIC_COMMAND)
 client.on_message = on_message
 
 
-print("Attente de commandes MQTT...")
+logging.info("Attente de commandes MQTT...")
