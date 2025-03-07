@@ -17,7 +17,7 @@ is_connected = False
 client_id = f"gsg_{uuid.uuid4().hex[:8]}"  # Ex: "gsg_a1b2c3d4"
 # client = mqtt.Client(client_id, mqtt.CallbackAPIVersion.VERSION2)
 client = mqtt.Client(client_id=client_id, protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
-
+client.enable_logger()
 
 # client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
@@ -56,7 +56,7 @@ client.on_disconnect = on_disconnect
 
 # Connexion au broker avec gestion des erreurs
 try:
-    client.connect(MQTT_BROKER, MQTT_PORT, 60)
+    client.connect(MQTT_BROKER, MQTT_PORT, 300)
     client.publish(MQTT_TOPIC_STATUS, "online", retain=True)
 except Exception as e:
     print(f"Erreur de connexion MQTT : {e}")
