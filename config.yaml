@@ -1,5 +1,5 @@
 name: "Gestion Stock Granulés"
-version: "1.0.2"
+version: "2.0.0"
 slug: "gsg"
 description: "Add-on pour la gestion des stocks de granulés avec MQTT et MySQL"
 url: https://github.com/antibill51/GSG_AddOn
