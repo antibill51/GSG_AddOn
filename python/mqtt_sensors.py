@@ -1,24 +1,17 @@
-from mqtt_client import client, is_connected
+from mqtt_client import client
 import json
 import time
 import os
 import requests
 from datetime import datetime
 import threading
+from mqtt_command_listener import on_message as command_on_message
 
 # Configuration MQTT
 MQTT_TOPIC = "homeassistant/sensor/gsg"
-
-# Lire les paramètres depuis les variables d’environnement
-MQTT_DELAY = int(os.getenv("MQTT_DELAY", "mqtt_delay"))
-
-
-# Attendre que la connexion soit établie
-while not is_connected:
-    print("En attente de la connexion MQTT...")
-    time.sleep(1)
-
-print("Connexion MQTT établie, démarrage du script...")
+MQTT_TOPIC_REFRESH = f"{MQTT_TOPIC}/refresh"
+MQTT_TOPIC_COMMAND = "homeassistant/sensor/gsg/command"
+MQTT_DELAY = int(os.getenv("MQTT_DELAY", "300"))
 
 def get_data():
     try:
@@ -76,26 +69,32 @@ def publish_sensors():
 
     
 # Callback pour recevoir les messages MQTT
-def on_message(client, userdata, msg):
-    try:
-        payload = json.loads(msg.payload.decode("utf-8"))
-        if payload.get("refresh"):  # Vérifie si une commande de rafraîchissement est envoyée
-            print("Commande de rafraîchissement reçue. Mise à jour immédiate des capteurs.")
-            publish_sensors()
-    except json.JSONDecodeError:
-        print(f"Message MQTT non reconnu : {msg.payload.decode('utf-8')}")
+def dispatch_on_message(client, userdata, msg):
+    """Distribue les messages MQTT au bon gestionnaire."""
+    if msg.topic == MQTT_TOPIC_COMMAND:
+        command_on_message(client, userdata, msg)
+    elif msg.topic == MQTT_TOPIC_REFRESH:
+        try:
+            payload = json.loads(msg.payload.decode("utf-8"))
+            if payload.get("refresh"):
+                print("Commande de rafraîchissement reçue. Mise à jour immédiate des capteurs.")
+                publish_sensors()
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            print(f"Message de rafraîchissement MQTT non reconnu : {msg.payload}")
+    elif msg.topic == "homeassistant/status" and msg.payload.decode("utf-8") == "online":
+        print("Home Assistant a redémarré. Publication des capteurs...")
+        publish_sensors()
 
 
-
-# Abonnement aux commandes
-client.subscribe(f"{MQTT_TOPIC}/refresh")
-client.subscribe("homeassistant/status")
-client.on_message = on_message
+def setup_subscriptions():
+    """Abonnement aux topics et configuration du callback de message."""
+    client.subscribe(MQTT_TOPIC_REFRESH)
+    client.subscribe("homeassistant/status")
+    client.on_message = dispatch_on_message
 
 def periodic_update():
     """Exécute publish_sensors() périodiquement sans bloquer MQTT."""
-    publish_sensors()
-    threading.Timer(MQTT_DELAY, periodic_update).start()  # Relance après MQTT_DELAY secondes
-
-# Démarrer la mise à jour périodique sans bloquer MQTT
-periodic_update()
+    while True:
+        time.sleep(MQTT_DELAY)
+        print("Mise à jour périodique des capteurs...")
+        publish_sensors()

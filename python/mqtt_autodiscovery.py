@@ -1,24 +1,14 @@
-from mqtt_client import client, is_connected
-# import paho.mqtt.client as mqtt
+from mqtt_client import client
 import json
 import os
-import time
 import requests
-
+import time
 
 # Configuration MQTT
 MQTT_TOPIC = "homeassistant/sensor/gsg"
 LWT_TOPIC = "homeassistant/sensor/gsg/status"
 
-MQTT_DELAY = int(os.getenv("MQTT_DELAY", "mqtt_delay"))
-
-
-# Attendre que la connexion soit établie
-while not is_connected:
-    print("En attente de la connexion MQTT...")
-    time.sleep(1)
-
-print("Connexion MQTT établie, démarrage du script...")
+MQTT_DELAY = int(os.getenv("MQTT_DELAY", "300"))
 
 # Récupération du SUPERVISOR_TOKEN pour interroger l'API Home Assistant
 SUPERVISOR_TOKEN = os.getenv("SUPERVISOR_TOKEN")
@@ -46,7 +36,7 @@ if SUPERVISOR_TOKEN:
         print(f"Erreur lors de la récupération des informations Supervisor : {e}")
 
 # Construire l'URL Ingress avec l'URL correcte
-CONFIGURATION_URL = f"{HASS_URL}/hassio/ingress/{ADDON_ID}/" if HASS_URL and ADDON_ID else None
+CONFIGURATION_URL = f"{HASS_URL}/hassio/ingress/{ADDON_ID}" if HASS_URL and ADDON_ID else None
 
 # Liste des capteurs
 sensors = {
@@ -126,86 +116,83 @@ number_entities = {
     }
 }
 
-# Publication des capteurs MQTT Discovery
-for sensor_id, sensor_info in sensors.items():
-    discovery_payload = {
-        "name": sensor_info["name"],
-        "state_topic": f"{MQTT_TOPIC}/{sensor_id}",
-        "unique_id": f"gsg_{sensor_id}",
-        "device": {
-            "name": "Gestion Stock Granulés",
-            "identifiers": ["gsg"],
-            "manufacturer": "R.Syrek/Antibill51",
-            "model": "GSG"
-        },
-        "availability_topic": LWT_TOPIC,  # Ajout de l'availability topic
-        "expire_after": (MQTT_DELAY + 60)  # L'entité devient "unavailable" après MQTT_DELAY + 1 minute sans mise à jour
-    }
-    
-    if "unit_of_measurement" in sensor_info:
-        discovery_payload["unit_of_measurement"] = sensor_info["unit_of_measurement"]
-    
-    if "icon" in sensor_info:
-        discovery_payload["icon"] = sensor_info["icon"]
+def publish_discovery_payloads():
+    """Publication des capteurs, commandes et autres entités via MQTT Discovery."""
+    # Publication des capteurs MQTT Discovery
+    for sensor_id, sensor_info in sensors.items():
+        discovery_payload = {
+            "name": sensor_info["name"],
+            "state_topic": f"{MQTT_TOPIC}/{sensor_id}",
+            "unique_id": f"gsg_{sensor_id}",
+            "device": {
+                "name": "Gestion Stock Granulés",
+                "identifiers": ["gsg"],
+                "manufacturer": "R.Syrek/Antibill51",
+                "model": "GSG"
+            },
+            "availability_topic": LWT_TOPIC,
+            "expire_after": (MQTT_DELAY + 60)
+        }
+        
+        if "unit_of_measurement" in sensor_info:
+            discovery_payload["unit_of_measurement"] = sensor_info["unit_of_measurement"]
+        
+        if "icon" in sensor_info:
+            discovery_payload["icon"] = sensor_info["icon"]
 
-    # Ajouter l'URL de configuration seulement si l'ID est récupéré
-    if CONFIGURATION_URL:
-        discovery_payload["device"]["configuration_url"] = CONFIGURATION_URL
+        if CONFIGURATION_URL:
+            discovery_payload["device"]["configuration_url"] = CONFIGURATION_URL
 
-    client.publish(f"homeassistant/sensor/gsg_{sensor_id}/config", json.dumps(discovery_payload), retain=True)
+        client.publish(f"homeassistant/sensor/gsg_{sensor_id}/config", json.dumps(discovery_payload), retain=True)
 
-# Publication des commandes MQTT Discovery
-for command_id, command_info in commands.items():
-    discovery_payload = {
-        "name": command_info["name"],
-        "command_topic": command_info["command_topic"],
-        "unique_id": f"gsg_{command_id}",
-        "device": {
-            "name": "Gestion Stock Granulés",
-            "identifiers": ["gsg"],
-            "manufacturer": "R.Syrek/Antibill51",
-            "model": "GSG"
-        },
-        "icon": command_info["icon"],
-        "payload_press": command_info["payload_press"],
-        "availability_topic": LWT_TOPIC  # Ajout de l'availability topic
-    }
+    # Publication des commandes MQTT Discovery
+    for command_id, command_info in commands.items():
+        discovery_payload = {
+            "name": command_info["name"],
+            "command_topic": command_info["command_topic"],
+            "unique_id": f"gsg_{command_id}",
+            "device": {
+                "name": "Gestion Stock Granulés",
+                "identifiers": ["gsg"],
+                "manufacturer": "R.Syrek/Antibill51",
+                "model": "GSG"
+            },
+            "icon": command_info["icon"],
+            "payload_press": command_info["payload_press"],
+            "availability_topic": LWT_TOPIC
+        }
 
-    # Ajouter l'URL de configuration seulement si l'ID est récupéré
-    if CONFIGURATION_URL:
-        discovery_payload["device"]["configuration_url"] = CONFIGURATION_URL
+        if CONFIGURATION_URL:
+            discovery_payload["device"]["configuration_url"] = CONFIGURATION_URL
 
+        client.publish(f"homeassistant/button/gsg_{command_id}/config", json.dumps(discovery_payload), retain=True)
 
-    client.publish(f"homeassistant/button/gsg_{command_id}/config", json.dumps(discovery_payload), retain=True)
+    # Publication du `number` MQTT Discovery pour "ajouter X sacs"
+    for number_id, number_info in number_entities.items():
+        discovery_payload = {
+            "name": number_info["name"],
+            "command_topic": number_info["command_topic"],
+            "state_topic": number_info["state_topic"],
+            "cmd_tpl": number_info["cmd_tpl"],
+            "unique_id": f"gsg_{number_id}",
+            "device": {
+                "name": "Gestion Stock Granulés",
+                "identifiers": ["gsg"],
+                "manufacturer": "R.Syrek/Antibill51",
+                "model": "GSG"
+            },
+            "min": number_info["min"],
+            "max": number_info["max"],
+            "step": number_info["step"],
+            "mode": number_info["mode"],
+            "icon": number_info["icon"],
+            "availability_topic": LWT_TOPIC,
+            "optimistic": True
+        }
 
-# Publication du `number` MQTT Discovery pour "ajouter X sacs"
-for number_id, number_info in number_entities.items():
-    discovery_payload = {
-        "name": number_info["name"],
-        "command_topic": number_info["command_topic"],
-        "state_topic": number_info["state_topic"],
-        "cmd_tpl": number_info["cmd_tpl"],
-        "unique_id": f"gsg_{number_id}",
-        "device": {
-            "name": "Gestion Stock Granulés",
-            "identifiers": ["gsg"],
-            "manufacturer": "R.Syrek/Antibill51",
-            "model": "GSG"
-        },
-        "min": number_info["min"],
-        "max": number_info["max"],
-        "step": number_info["step"],
-        "mode": number_info["mode"],
-        "icon": number_info["icon"],
-        "availability_topic": LWT_TOPIC,  # Ajout de l'availability topic
-        "optimistic": True
-    }
+        if CONFIGURATION_URL:
+            discovery_payload["device"]["configuration_url"] = CONFIGURATION_URL
 
-    # Ajouter l'URL de configuration seulement si l'ID est récupéré
-    if CONFIGURATION_URL:
-        discovery_payload["device"]["configuration_url"] = CONFIGURATION_URL
+        client.publish(f"homeassistant/number/gsg_{number_id}/config", json.dumps(discovery_payload), retain=True)
 
-    client.publish(f"homeassistant/number/gsg_{number_id}/config", json.dumps(discovery_payload), retain=True)
-
-# Publier que l'addon est en ligne
-print("Autodiscovery MQTT publié")
+    print("Autodiscovery MQTT publié.")

@@ -1,11 +1,10 @@
-#!/command/with-contenv bashio
+#!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 # ==============================================================================
 # Home Assistant Community Add-on: gsg
 # Configures gsg
 # ==============================================================================
 
-#!/usr/bin/with-contenv bashio
 set -e
 
 MYSQL_HOST=$(bashio::config 'mysql_host')

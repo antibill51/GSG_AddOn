@@ -1,21 +1,12 @@
-from mqtt_client import client, is_connected
-# import paho.mqtt.client as mqtt
+from mqtt_client import client
 import json
 from datetime import datetime
 import requests
-import time
 import os
 
 # Configuration MQTT
 MQTT_TOPIC_COMMAND = "homeassistant/sensor/gsg/command"
 MQTT_TOPIC = "homeassistant/sensor/gsg"
-
-# Attendre que la connexion soit établie
-while not is_connected:
-    print("En attente de la connexion MQTT...")
-    time.sleep(1)
-
-print("Connexion MQTT établie, démarrage du script...")
 
 # Callback lors de la réception d'un message MQTT
 def on_message(client, userdata, msg):
@@ -75,8 +66,10 @@ def maj_entretien(type_entretien):
     except requests.exceptions.RequestException as e:
         print(f"Erreur de connexion: {e}")
 
-client.subscribe(MQTT_TOPIC_COMMAND)
-client.on_message = on_message
-
-
-print("Attente de commandes MQTT...")
+def start_command_listener():
+    """S'abonne au topic de commande et attache le callback."""
+    client.subscribe(MQTT_TOPIC_COMMAND)
+    # Note: on_message sera attaché à un autre topic dans mqtt_sensors.py
+    # Paho-MQTT ne supporte qu'un seul on_message global.
+    # Nous allons donc créer un dispatcher dans mqtt_sensors.py
+    print("Prêt à recevoir des commandes MQTT...")
