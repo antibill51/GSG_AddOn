@@ -6,6 +6,7 @@ import requests
 from datetime import datetime
 import threading
 from mqtt_command_listener import on_message as command_on_message
+from mqtt_autodiscovery import publish_discovery_payloads
 
 # Configuration MQTT
 MQTT_TOPIC = "homeassistant/sensor/gsg"
@@ -82,7 +83,8 @@ def dispatch_on_message(client, userdata, msg):
         except (json.JSONDecodeError, UnicodeDecodeError):
             print(f"Message de rafraîchissement MQTT non reconnu : {msg.payload}")
     elif msg.topic == "homeassistant/status" and msg.payload.decode("utf-8") == "online":
-        print("Home Assistant a redémarré. Publication des capteurs...")
+        print("Home Assistant a redémarré. Re-publication autodiscovery et capteurs...")
+        publish_discovery_payloads()
         publish_sensors()
 
 

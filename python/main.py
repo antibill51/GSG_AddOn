@@ -5,8 +5,11 @@ from mqtt_autodiscovery import publish_discovery_payloads
 from mqtt_command_listener import start_command_listener, MQTT_TOPIC_COMMAND
 from mqtt_sensors import periodic_update, publish_sensors, setup_subscriptions
 
+update_thread_started = False
+
 def on_connect(client, userdata, flags, rc, *args):
     """Callback de connexion, lance les opérations post-connexion."""
+    global update_thread_started
     if rc == 0:
         print("Connecté à MQTT !")
         client.publish(MQTT_TOPIC_STATUS, "online", retain=True)
@@ -23,10 +26,12 @@ def on_connect(client, userdata, flags, rc, *args):
         print("Démarrage de l'écoute des topics de statut et de rafraîchissement...")
         setup_subscriptions()
 
-        # 3. Lancer la mise à jour périodique des capteurs dans un thread séparé
-        print("Lancement de la mise à jour périodique des capteurs...")
-        update_thread = threading.Thread(target=periodic_update, daemon=True)
-        update_thread.start()
+        # 3. Lancer la mise à jour périodique des capteurs dans un thread séparé (unique)
+        if not update_thread_started:
+            print("Lancement de la mise à jour périodique des capteurs...")
+            update_thread = threading.Thread(target=periodic_update, daemon=True)
+            update_thread.start()
+            update_thread_started = True
 
         # Publier une première fois les valeurs
         publish_sensors()

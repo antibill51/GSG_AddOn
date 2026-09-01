@@ -23,7 +23,7 @@ options:
   mqtt_port: 1883
   mqtt_user: "homeassistant"
   mqtt_password: "password"
-  mqtt_delay: "300"
+  mqtt_delay: 300
   mysql_host: "core-mariadb"
   mysql_user: "gsg"
   mysql_password: "gsg"
