@@ -1,7 +1,7 @@
 # GSG_AddOn for Home Assistant
 
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Addon-blue)](https://www.home-assistant.io/)
-[![Version](https://img.shields.io/badge/Version-2.0.0-brightgreen)](https://github.com/antibill51/GSG_AddOn)
+[![Version](https://img.shields.io/badge/Version-2.0.1-brightgreen)](https://github.com/antibill51/GSG_AddOn)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
 ## 🔥 Gestion du Stock de Granulés (GSG) pour Home Assistant
@@ -84,6 +84,20 @@ L'addon utilise **MQTT Discovery** pour enregistrer automatiquement les entités
 | Sensor | `sensor.gestion_stock_granules_consommation_septembre` → `aout` | Consommation mensuelle |
 | Button | `button.gestion_stock_granules_ajouter_un_sac` | Ajout d'un sac |
 | Number | `number.gestion_stock_granules_ajouter_x_sacs` | Ajouter plusieurs sacs (1 à 3) |
+
+---
+
+## 📝 **Changelog**
+
+### 2.0.1
+- **Fix MQTT :** Protection contre la duplication du thread de mise à jour périodique lors des reconnexions MQTT (`guard periodic update thread`).
+- **Autodiscovery HA :** Re-publication automatique des capteurs et de l'autodiscovery lors d'un redémarrage de Home Assistant (`homeassistant/status == online`).
+- **Schéma :** Correction du type de données pour `mqtt_delay` (`int`).
+- **Maintenance :** Ajout du fichier `.gitignore` et nettoyage des caches Python.
+
+### 2.0.0
+- Mise à jour Dockerfile et refactorisation de la logique MQTT.
+- Gestion multi-architectures (amd64, armv7, aarch64).
 
 ---
 
