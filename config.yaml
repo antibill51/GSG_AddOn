@@ -1,9 +1,8 @@
 name: "Gestion Stock Granulés"
-version: "2.0.1"
+version: "2.0.2"
 slug: "gsg"
 description: "Add-on pour la gestion des stocks de granulés avec MQTT et MySQL"
 url: https://github.com/antibill51/GSG_AddOn
-codenotary: remi.kiragossian@gmail.com
 webui: "[PROTO:ssl]://[HOST]:[PORT:9541]"
 startup: "application"
 boot: "auto"
@@ -16,7 +15,6 @@ panel_title: "Stock Granulés"
 panel_admin: false
 arch:
   - amd64
-  - armv7
   - aarch64
 options:
   mqtt_host: "core-mosquitto"

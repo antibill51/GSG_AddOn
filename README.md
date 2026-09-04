@@ -1,7 +1,7 @@
 # GSG_AddOn for Home Assistant
 
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Addon-blue)](https://www.home-assistant.io/)
-[![Version](https://img.shields.io/badge/Version-2.0.1-brightgreen)](https://github.com/antibill51/GSG_AddOn)
+[![Version](https://img.shields.io/badge/Version-2.0.2-brightgreen)](https://github.com/antibill51/GSG_AddOn)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
 ## 🔥 Gestion du Stock de Granulés (GSG) pour Home Assistant
@@ -88,6 +88,10 @@ L'addon utilise **MQTT Discovery** pour enregistrer automatiquement les entités
 ---
 
 ## 📝 **Changelog**
+
+### 2.0.2
+- **Fix Build Docker :** Remplacement de l'image de base invalide `base:latest` par `base:21.0.4` et ajout du fichier `build.yaml` (multi-architectures `aarch64` et `amd64`).
+- **Compatibilité Supervisor :** Suppression du champ déprécié `codenotary` et retrait de l'architecture obsolète `armv7`.
 
 ### 2.0.1
 - **Fix MQTT :** Protection contre la duplication du thread de mise à jour périodique lors des reconnexions MQTT (`guard periodic update thread`).
